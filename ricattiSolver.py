@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 ################################################################################
 
 #Model parameters
-lambdaA = 1e-2
-lambdaB = 1e-2
-kAB = 0
-kBA = 0
+lambdaA = 1e-5
+lambdaB = 1e-5
+kAB = 1e-3
+kBA = 1e-1
 T = 10
 
 ################################################################################
@@ -17,9 +17,11 @@ T = 10
 def A():
     return np.array([[lambdaA - kAB, kBA], [kAB, lambdaB - kBA]])
 
+#Control cost matrix
 def R():
     return np.eye(2)
 
+#State cost matrix
 def Q():
     return np.eye(2)
 
@@ -56,19 +58,21 @@ def riccati_ode(t, S_flat, x):
     R2_val = R2(x, S)
 
     #Riccati equation: M = -SA - R1 - Q - A^T S + R2
-    M = -S @ A() - R1_val - Q() - A().T @ S + R2_val
+    M = -S @ A() + R1_val - Q() - A().T @ S + R2_val
     return M.flatten()  #Flatten the matrix to use in ODE solvers
 
 #Feedback control
 def control(t, x, S):
     sum_term = sum([C()[i] @ np.outer(np.ones(len(x)), x) @ E()[i] for i in range(len(C()))])
     u_star = -np.linalg.inv(R()) @ sum_term.T @ S @ x
-    return u_star
+    u_star = np.minimum(u_star, np.array([1, 1]))
+    u_star = np.maximum(u_star, np.array([0, 0]))
+    return -u_star
 
 #System dynamics for the state vector x(t)
 def state_dynamics(t, x, S_func):
     #Get S(t) from the interpolated solution
-    S = S_func(t).reshape((len(x), len(x)))  
+    S = S_func(t).reshape((len(x), len(x)))
     u_star = control(t, x, S)
 
     #Compute the nonlinear state dynamics
@@ -88,7 +92,8 @@ def solve_optimal_control(x0, S0, t_span):
     sol_S = solve_ivp(riccati_ode, t_span, S0_flat, args=(x0,), method='RK45')
 
     #Use interp1d to interpolate each element of S separately
-    S_interp_funcs = [interp1d(sol_S.t, sol_S.y[i], kind='linear', fill_value="extrapolate") for i in range(sol_S.y.shape[0])]
+    S_interp_funcs = [interp1d(sol_S.t, sol_S.y[i], kind='linear', \
+                    fill_value="extrapolate") for i in range(sol_S.y.shape[0])]
 
     #Define a function to get the full S matrix at time t
     def S_func(t):
@@ -112,6 +117,8 @@ def compute_control(t, x, S_func):
     S = S_func(t).reshape((2, 2))  #Reshape S from flattened form
     sum_term = sum([C()[i] @ np.outer(np.ones(len(x)), x) @ E()[i] for i in range(len(C()))])
     u_star = -np.linalg.inv(R()) @ sum_term.T @ S @ x
+    u_star = np.minimum(u_star, np.array([1, 1]))
+    u_star = np.maximum(u_star, np.array([0, 0]))
     return u_star
 
 #Visualization function
