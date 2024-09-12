@@ -7,6 +7,21 @@ cell populations with optimal multiplicative control and drug-drug interactions
 Example 1
 
 Written by Samuel Johnson and Simon Martina-Perez
+
+dNa / dt = 2Nb(1 - Up) - alpha Na(1 - Uc)
+
+dNb / dt = -Nb(1 - Up) + alpha Na(1 - Uc)
+
+Na = non-proliferative cells
+Nb = proliferative cells
+Up = paclitaxel concentration
+Uc = cisplatin concentration
+
+state vector (Na, Nb)
+drug vector (Uc, Up)
+
+In solver, flattened array formatted as [x...S...]
+
 '''
 
 import numpy as np
@@ -16,37 +31,40 @@ import matplotlib.pyplot as plt
 
 ################################################################################
 
-#Non-dimensional model parameters
-lambdaA = 10
-lambdaB = 2
-beta = 1 / lambdaB
-alpha = 1 #/ lambdaA
-T = 10
-
-################################################################################
+#Non-dimensional model parameter
+alpha = 2
+T = 20
 
 #Linear state coefficient matrix
 def A():
-    return np.array([[-beta, 2], [alpha * beta, -1]])
+    return np.array([[-alpha, 2], [alpha, -1]])
 
 #Control cost matrix
 def R():
-    return np.eye(2)
+
+    R = np.eye(2)
+
+    return R
 
 #State cost matrix
 def Q():
-    return np.eye(2)
+
+    Q = np.eye(2)
+
+    return Q
 
 #Non-linear coefficient matrices
 def C():
+
     #Two 2x2 matrices
-    return np.array([[[beta, 0], [-alpha * beta, 0]], \
+    return np.array([[[alpha, 0], [-alpha, 0]], \
                      [[0, -2], [0, 1]]])
 
 #Epsilon matrices
 def E():
     e_1 = np.array([[1], [0]])
     e_2 = np.array([[0], [1]])
+
     #Each E[i] is 2x2
     return np.array([e_1 @ np.ones((1, 2)), e_2 @ np.ones((1, 2))])
 
@@ -68,13 +86,34 @@ def R2(x, S):
                           @ C()[i].T for i in range(2)])
     return -sum_term @ S
 
+#Compute control
+def control(x, S):
+    #Column vector of ones
+    ones = np.array([[1], [1]])
+
+    #Compute inner sum term in optimal control formula
+    sum_term = sum([np.multiply(C()[i], ones @ x.T @ E()[i]) for \
+                          i in range(2)])
+
+    #Compute optimal control and clip between (0, 1)
+    u_star = np.linalg.inv(R()) @ sum_term.T @ S @ x
+
+    u_star = np.minimum(u_star, np.array([[1], [1]]))
+    u_star = np.maximum(u_star, np.array([[0], [0]]))
+
+    #Optimal control
+    return u_star
+
 ################################################################################
 
 #System dynamics for S(t)
-def riccati_ode(t, S_flat, x):
+def riccati(t, master_flat):
+
+    #Reshape x_flat back into 2x1 matrix
+    x = master_flat[0:2].reshape((2, 1))
 
     #Reshape S_flat back into a 2x2 matrix
-    S = S_flat.reshape((len(x), len(x)))
+    S = master_flat[2:].reshape((len(x), len(x)))
 
     #Compute the matrix M in the Riccati equation
     R1_val = R1(x, S)
@@ -82,128 +121,97 @@ def riccati_ode(t, S_flat, x):
 
     #Riccati equation: M = -SA - R1 - Q - A^T S + R2
     M = -S @ A() + R1_val - Q() - A().T @ S + R2_val
-    return M.flatten()  #Flatten the matrix to use in ODE solvers
 
-#Feedback control
-def control(t, x, S):
-    sum_term = sum([C()[i] @ np.outer(np.ones(len(x)), x) @ \
-                    E()[i] for i in range(len(C()))])
-    u_star = -np.linalg.inv(R()) @ sum_term.T @ S @ x
-    u_star = np.minimum(u_star, np.array([1, 1]))
-    u_star = np.maximum(u_star, np.array([0, 0]))
-    return -u_star
+    return M.flatten()
 
 #System dynamics for the state vector x(t)
-def state_dynamics(t, x, S_func):
-    #Get S(t) from the interpolated solution
-    S = S_func(t).reshape((len(x), len(x)))
-    u_star = control(t, x, S)
+def state(t,  master_flat):
+
+    #Column vector of ones
+    ones = np.array([[1], [1]])
+
+    #Reshape x_flat back into 2x1 matrix
+    x = master_flat[0:2].reshape((2, 1))
+
+    #Reshape S_flat back into a 2x2 matrix
+    S = master_flat[2:].reshape((len(x), len(x)))
+
+    #Calculate optimal control from Ricatti equation
+    u_star = control(x, S)
 
     #Compute the nonlinear state dynamics
-    L = np.zeros_like(x)
-    for i in range(len(C())):
-        L += C()[i] @ u_star
+    L = sum([np.multiply(C()[i], ones @ x.T @ E()[i]) for \
+                          i in range(2)]) @ u_star
 
-    return A() @ x + L
+    #Flattened state dynamics matrix
+    return(((A() @ x + L).flatten()))
+
+#Derivative of both state vector and S(x)
+def total_derivative(t, master_flat):
+
+    #Return time derivatives of S and x
+    return list(state(t, master_flat)) + list(riccati(t, master_flat))
 
 ################################################################################
 
 #Solve the system of ODEs
 def solve_optimal_control(x0, S0, t_span):
-    S0_flat = S0.flatten()
+    #Flatten initial conditions
+    S0_flat = list(S0.flatten())
+    x0_flat = list(x0.flatten())
+
+    master0_flat = x0_flat + S0_flat
 
     #Solve for S(t) using solve_ivp
-    sol_S = solve_ivp(riccati_ode, t_span, S0_flat, args=(x0,), method='RK45')
+    sol_master = solve_ivp(total_derivative, t_span, master0_flat, \
+                 method='LSODA')
 
-    #Use interp1d to interpolate each element of S separately
-    S_interp_funcs = [interp1d(sol_S.t, sol_S.y[i], kind='linear', \
-                    fill_value="extrapolate") for i in range(sol_S.y.shape[0])]
+    sol_x = sol_master.y[0:2, :]
+    sol_S = sol_master.y[2:, :]
+    t = sol_master.t
 
-    #Define a function to get the full S matrix at time t
-    def S_func(t):
-        S_flat = np.array([interp_func(t) for interp_func in S_interp_funcs])
-        return S_flat
+    return t, sol_S, sol_x
 
-    #Use the solved S(t) to compute the optimal state trajectory
-    sol_x = solve_ivp(state_dynamics, t_span, x0.flatten(), args=(S_func,), method='RK45')
+#Initial conditions
+x0 = np.array([[1], [1]])
+S0 = np.array([[0, 0], [0, 0]])
+t_span = (0, T)
 
-    return sol_S, sol_x
+t, sol_S, sol_x = solve_optimal_control(x0, S0, t_span)
 
-#Example usage
-x0 = np.array([[1], [1]])  #Initial condition for x
-S0 = np.array([[0, 0], [0, 0]])  #Initial condition for S (symmetric matrix)
-t_span = (0, T)  #Time interval
+sol_u = [control(sol_x[:, i].reshape((2, 1)), \
+        sol_S[:, i].reshape((2, 2))) for i in range(len(t))]
 
-sol_S, sol_x = solve_optimal_control(x0, S0, t_span)
-
-#Compute the control input
-def compute_control(t, x, S_func):
-    S = S_func(t).reshape((2, 2))  #Reshape S from flattened form
-    sum_term = sum([C()[i] @ np.outer(np.ones(len(x)), x) @ E()[i] for i \
-                           in range(len(C()))])
-    u_star = -np.linalg.inv(R()) @ sum_term.T @ S @ x
-    u_star = np.minimum(u_star, np.array([1, 1]))
-    u_star = np.maximum(u_star, np.array([0, 0]))
-    return u_star
+sol_u = np.array(sol_u).T
 
 #Visualization function
-def plot_results(sol_S, sol_x, T):
-    #Time points
-    t = sol_x.t
+def plot_results(t, sol_S, sol_x):
 
-    #State trajectory
-    x = sol_x.y.T
-
-    #Interpolate S(t) from sol_S
-    S_interp_funcs = [interp1d(sol_S.t, sol_S.y[i], kind='linear', \
-                      fill_value="extrapolate") for i in range(sol_S.y.shape[0])]
-    def S_func(t):
-        S_flat = np.array([interp_func(t) for interp_func in S_interp_funcs])
-        return S_flat.reshape((2, 2))
-
-    S = np.array([S_func(ti) for ti in t])
-
-    #Compute control input over time
-    u = np.array([compute_control(ti, x_i, S_func) for ti, x_i in zip(t, x)])
-
-    # Plot state trajectory
+    #Plot state trajectory
     plt.figure(figsize=(18, 6))
 
-    plt.subplot(1, 3, 1)
-    plt.plot(t, x[:, 0], label='$x_1(t)$')
-    plt.plot(t, x[:, 1], label='$x_2(t)$')
+    plt.subplot(1, 2, 1)
+    plt.plot(t, sol_x[0, :], label='$x_1(t)$')
+    plt.plot(t, sol_x[1, :], label='$x_2(t)$')
     plt.xlabel('Time')
     plt.ylabel('State')
     plt.title('State Trajectory')
-    plt.legend()
-
-    #Plot S(t) over time
-    plt.subplot(1, 3, 2)
-    plt.plot(t, [S[i, 0, 0] for i in range(len(t))], label='$S_{{11}}(t)$')
-    plt.plot(t, [S[i, 0, 1] for i in range(len(t))], label='$S_{{12}}(t)$')
-    plt.plot(t, [S[i, 1, 0] for i in range(len(t))], label='$S_{{21}}(t)$')
-    plt.plot(t, [S[i, 1, 1] for i in range(len(t))], label='$S_{{22}}(t)$')
-    plt.xlabel('Time')
-    plt.ylabel('Matrix Elements')
-    plt.title('Matrix $S(t)$')
-    plt.legend()
 
     #Plot control input over time
-    plt.subplot(1, 3, 3)
-    plt.plot(t, u[:, 0], label='$u_1(t)$')
-    plt.plot(t, u[:, 1], label='$u_2(t)$')
+    plt.subplot(1, 2, 2)
+    plt.plot(t, sol_u[0][0], label='$u_1(t)$')
+    plt.plot(t, sol_u[0][1], label='$u_2(t)$')
     plt.xlabel('Time')
     plt.ylabel('Control Input')
     plt.title('Control Input')
     plt.legend()
 
-    plt.tight_layout()
     plt.show()
+
 
 #Example usage
 x0 = np.array([[1], [1]])  #Initial condition for state vector
 S0 = np.array([[0, 0], [0, 0]])  #Initial condition for S
 t_span = (0, T)  #Time interval
 
-sol_S, sol_x = solve_optimal_control(x0, S0, t_span)
-plot_results(sol_S, sol_x, T)
+plot_results(t, sol_S, sol_x)
