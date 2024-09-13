@@ -1,5 +1,5 @@
 '''
-ricattiSolver.py - 09/09/24
+ricattiSolver.py - 13/09/24
 
 A script used in the publication: Modelling treatment response of heterogeneous
 cell populations with optimal multiplicative control and drug-drug interactions
@@ -25,15 +25,15 @@ In solver, flattened array formatted as [x...S...]
 '''
 
 import numpy as np
-from scipy.integrate import solve_ivp
+from scipy.integrate import solve_bvp
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
 ################################################################################
 
 #Non-dimensional model parameter
-alpha = 2
-T = 20
+alpha = 0.5
+T = 2.5
 
 #Linear state coefficient matrix
 def A():
@@ -68,26 +68,8 @@ def E():
     #Each E[i] is 2x2
     return np.array([e_1 @ np.ones((1, 2)), e_2 @ np.ones((1, 2))])
 
-#Compute R1 (control-dependent term)
-def R1(x, S):
-    ones = np.array([[1], [1]])
-    sum_term = sum([np.multiply(C()[i], ones @ x.T @ E()[i]) for i in range(2)])
-    return -sum_term @ np.linalg.inv(R()) @ sum_term.T @ S
-
-#Compute R2 (control-dependent term)
-def R2(x, S):
-    ones = np.array([[1], [1]])
-    e1 = np.array([[1], [0]])
-    e2 = np.array([[0], [1]])
-    eArr = [e1, e2]
-    inner_sum_term = sum([np.multiply(C()[i], ones @ x.T @ E()[i]) for \
-                          i in range(2)])
-    sum_term = sum([eArr[i] @ (x.T @ S @ inner_sum_term) @ (np.linalg.inv(R())).T \
-                          @ C()[i].T for i in range(2)])
-    return -sum_term @ S
-
 #Compute control
-def control(x, S):
+def control(x, lmbd):
     #Column vector of ones
     ones = np.array([[1], [1]])
 
@@ -96,7 +78,7 @@ def control(x, S):
                           i in range(2)])
 
     #Compute optimal control and clip between (0, 1)
-    u_star = np.linalg.inv(R()) @ sum_term.T @ S @ x
+    u_star = -np.linalg.inv(R()) @ sum_term.T @ lmbd
 
     u_star = np.minimum(u_star, np.array([[1], [1]]))
     u_star = np.maximum(u_star, np.array([[0], [0]]))
@@ -107,20 +89,27 @@ def control(x, S):
 ################################################################################
 
 #System dynamics for S(t)
-def riccati(t, master_flat):
+def costate(t, master_flat):
 
     #Reshape x_flat back into 2x1 matrix
     x = master_flat[0:2].reshape((2, 1))
 
     #Reshape S_flat back into a 2x2 matrix
-    S = master_flat[2:].reshape((len(x), len(x)))
+    lmbd = master_flat[2:].reshape((2, 1))
 
-    #Compute the matrix M in the Riccati equation
-    R1_val = R1(x, S)
-    R2_val = R2(x, S)
+    u = control(x, lmbd)
 
-    #Riccati equation: M = -SA - R1 - Q - A^T S + R2
-    M = -S @ A() + R1_val - Q() - A().T @ S + R2_val
+    #Calculate lambda derivative
+    ones = np.array([[1], [1]])
+    e1 = np.array([[1], [0]])
+    e2 = np.array([[0], [1]])
+    eArr = [e1, e2]
+    sum_term = sum([eArr[i] @ (C()[i] @ u).T @ lmbd for i in range(2)])
+
+    # print((A()).T @ lmbd)
+    # print(sum_term)
+
+    M = -Q() @ x - (A()).T @ lmbd - sum_term
 
     return M.flatten()
 
@@ -133,11 +122,11 @@ def state(t,  master_flat):
     #Reshape x_flat back into 2x1 matrix
     x = master_flat[0:2].reshape((2, 1))
 
-    #Reshape S_flat back into a 2x2 matrix
-    S = master_flat[2:].reshape((len(x), len(x)))
+    #Reshape lmbd_flat back into a 2x2 matrix
+    lmbd = master_flat[2:].reshape((2, 1))
 
     #Calculate optimal control from Ricatti equation
-    u_star = control(x, S)
+    u_star = control(x, lmbd)
 
     #Compute the nonlinear state dynamics
     L = sum([np.multiply(C()[i], ones @ x.T @ E()[i]) for \
@@ -150,42 +139,68 @@ def state(t,  master_flat):
 def total_derivative(t, master_flat):
 
     #Return time derivatives of S and x
-    return list(state(t, master_flat)) + list(riccati(t, master_flat))
+    return list(state(t, master_flat)) + list(costate(t, master_flat))
+
+#Derivative of both state vector and S(x), vectorised
+
+def total_derivative_vec(t, y):
+
+    #Return time derivatives of S and x
+    return np.array([np.array(list(state(t, y[:,i])) + list(costate(t, y[:,i])))\
+                        for i in range(y.shape[1])]).T
+
+
+#Evaluation of the boundary conditions
+def bc(ya,yb):
+
+    return np.array([ya[0] - x0[0][0], ya[1]-x0[1][0], yb[2], yb[3]])
+
 
 ################################################################################
 
 #Solve the system of ODEs
-def solve_optimal_control(x0, S0, t_span):
+def solve_optimal_control(x0, lmbd0, t_span):
     #Flatten initial conditions
-    S0_flat = list(S0.flatten())
-    x0_flat = list(x0.flatten())
+    #lmbd0_flat = list(lmbd0.flatten())
+    #x0_flat = list(x0.flatten())
 
-    master0_flat = x0_flat + S0_flat
+    #master0_flat = x0_flat + lmbd0_flat
 
     #Solve for S(t) using solve_ivp
-    sol_master = solve_ivp(total_derivative, t_span, master0_flat, \
-                 method='LSODA')
+    # sol_master = solve_ivp(total_derivative, t_span, master0_flat, \
+    #              method='LSODA')
+
+    sol_master = solve_bvp(total_derivative_vec, bc, x = tmsh,
+                            y = np.zeros((4,tmsh.shape[0])), verbose=2,
+                            tol=1e-4, max_nodes = 1e4)
 
     sol_x = sol_master.y[0:2, :]
-    sol_S = sol_master.y[2:, :]
-    t = sol_master.t
+    sol_lmbd = sol_master.y[2:, :]
+    t = sol_master.x
 
-    return t, sol_S, sol_x
+    return t, sol_x, sol_lmbd
 
 #Initial conditions
 x0 = np.array([[1], [1]])
-S0 = np.array([[0, 0], [0, 0]])
+lmbd0 = np.array([[0], [0]])
 t_span = (0, T)
+tmsh = np.linspace(0, T, 1000)
 
-t, sol_S, sol_x = solve_optimal_control(x0, S0, t_span)
+t, sol_x, sol_lmbd = solve_optimal_control(x0, lmbd0, t_span)
+
+
+
+################################################################################
 
 sol_u = [control(sol_x[:, i].reshape((2, 1)), \
-        sol_S[:, i].reshape((2, 2))) for i in range(len(t))]
+        sol_lmbd[:, i].reshape((2, 1))) for i in range(len(t))]
+
+################################################################################
 
 sol_u = np.array(sol_u).T
 
 #Visualization function
-def plot_results(t, sol_S, sol_x):
+def plot_results(t, sol_x, sol_lmbd):
 
     #Plot state trajectory
     plt.figure(figsize=(18, 6))
@@ -208,10 +223,4 @@ def plot_results(t, sol_S, sol_x):
 
     plt.show()
 
-
-#Example usage
-x0 = np.array([[1], [1]])  #Initial condition for state vector
-S0 = np.array([[0, 0], [0, 0]])  #Initial condition for S
-t_span = (0, T)  #Time interval
-
-plot_results(t, sol_S, sol_x)
+plot_results(t, sol_x, sol_lmbd)
