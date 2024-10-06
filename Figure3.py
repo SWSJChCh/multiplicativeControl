@@ -1,10 +1,8 @@
 '''
-example1-Fig2.py - 26/09/24
+Figure3.py - 06/10/24
 
-A script used in the publication: Modelling treatment response of heterogeneous
-cell populations with optimal multiplicative control and drug-drug interactions
-
-FIGURE 1
+A script used in the publication: Optimal combination therapy for 
+heterogeneous cell populations with drug synergies
 
 Written by Samuel Johnson and Simon Martina-Perez
 
