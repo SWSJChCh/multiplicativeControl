@@ -4,8 +4,6 @@ Figure2.py - 06/10/24
 A script used in the publication: Optimal combination therapy for 
 heterogeneous cell populations with drug synergies
 
-FIGURE 2
-
 Written by Samuel Johnson and Simon Martina-Perez
 
 dNa / dt = 2(1 - Up) * Nb - Na * (1 - Uc) - alpha * Uc * Na
