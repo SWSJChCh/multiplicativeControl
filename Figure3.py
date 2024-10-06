@@ -230,7 +230,7 @@ def solve_optimal_control(x0, lmbd0, t_span, alpha, beta):
     #Solve BVP for state and adjoint
     sol_master = solve_bvp(lambda t, y: total_derivative_vec(t, y, alpha, \
                            beta), bc, x = tmsh, y = np.zeros((4,\
-                           tmsh.shape[0])), verbose=2, tol=1e-6, max_nodes = 5e4)
+                           tmsh.shape[0])), verbose=2, tol=1e-8, max_nodes = 1e5)
 
     #Extract state and adjoint dynamics
     sol_x = sol_master.y[0:2, :]
@@ -245,8 +245,8 @@ def solve_optimal_control_mean(x0, lmbd0, t_span, alpha, beta, u1, u2):
     #Solve BVP for state and adjoint
     sol_master = solve_bvp(lambda t, y: total_derivative_vec_mean(t, y, \
                             alpha, beta, u1, u2), bc, x = tmsh, y = \
-                            np.zeros((4,tmsh.shape[0])), verbose=2, tol=1e-6, \
-                            max_nodes = 5e4)
+                            np.zeros((4,tmsh.shape[0])), verbose=2, tol=1e-8, \
+                            max_nodes = 1e5)
 
     #Extract state and adjoint dynamics
     sol_x = sol_master.y[0:2, :]
