@@ -1,5 +1,5 @@
 '''
-example1-Fig1.py - 06/10/24
+Figure2.py - 06/10/24
 
 A script used in the publication: Optimal combination therapy for 
 heterogeneous cell populations with drug synergies
