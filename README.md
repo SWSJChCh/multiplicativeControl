@@ -21,7 +21,7 @@ The required libraries can be installed using pip:
 
 ```bash
 pip install numpy scipy matplotlib
-
+```
 ## Script Descriptions
 
 ### Figure2.py
