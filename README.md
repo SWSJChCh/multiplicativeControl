@@ -98,6 +98,7 @@ To execute the script, use the following command in your terminal:
 
 ```bash
 python example1-Fig2.py <alpha> <beta> <control_cost>
+```
 Outputs
 The script will generate an output file named a=<alpha>-b=<beta>-R11=<control_cost>.txt, which contains:
 
