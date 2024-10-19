@@ -35,12 +35,12 @@ The system is described by the following differential equations:
 
 1. **Non-Proliferative Cells (Na):**
    \[
-   \frac{dNa}{dt} = 2(1 - Up) \cdot Nb - Na \cdot (1 - Uc) - \alpha \cdot Uc \cdot Na
+   $$\frac{dNa}{dt} = 2(1 - Up) \cdot Nb - Na \cdot (1 - Uc) - \alpha \cdot Uc \cdot Na$$
    \]
 
 2. **Proliferative Cells (Nb):**
    \[
-   \frac{dNb}{dt} = -(1 - Up) \cdot Nb + Na \cdot (1 - Uc) - \beta \cdot Up \cdot Nb
+   $$\frac{dNb}{dt} = -(1 - Up) \cdot Nb + Na \cdot (1 - Uc) - \beta \cdot Up \cdot Nb$$
    \]
 
 Where:
