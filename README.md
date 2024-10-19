@@ -33,12 +33,12 @@ cell counts are calculated in both regimes.
 #### Model Description
 The system is described by the following differential equations:
 
-1. **Non-Proliferative Cells (Na):**
+1. **Non-Proliferative Cells ($$N_a$$):**
    \[
    $$\frac{dNa}{dt} = 2(1 - Up) \cdot Nb - Na \cdot (1 - Uc) - \alpha \cdot Uc \cdot Na$$
    \]
 
-2. **Proliferative Cells (Nb):**
+2. **Proliferative Cells ($$N_b$$):**
    \[
    $$\frac{dNb}{dt} = -(1 - Up) \cdot Nb + Na \cdot (1 - Uc) - \beta \cdot Up \cdot Nb$$
    \]
@@ -50,8 +50,8 @@ Where:
 - \( Up \) = Relative concentration of paclitaxel
 
 #### State and Drug Vectors
-- **State Vector:** \([Na, Nb]\)
-- **Drug Vector:** \([Uc, Up]\)
+- **State Vector:** $$\([Na, Nb]\)$$
+- **Drug Vector:** $$\([Uc, Up]\)$$
 
 
 #### How to Run
