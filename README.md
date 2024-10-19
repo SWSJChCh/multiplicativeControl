@@ -11,7 +11,7 @@ _Optimal control in combination therapy for heterogeneous cell populations with 
 ### Date
 - 06/10/2024
 
-## Requirements
+### Requirements
 - Python 3.x
 - NumPy
 - SciPy
