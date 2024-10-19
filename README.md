@@ -58,7 +58,7 @@ To execute the script, use the following command in your terminal:
 ```bash
 python Figure2.py <alpha> <beta>
 ```
-####Outputs
+#### Outputs
 The script will generate an output file named a=<alpha>-b=<beta>.txt, which contains:
 
 Total cell count at the end of the optimal regime
