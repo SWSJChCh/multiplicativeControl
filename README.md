@@ -63,7 +63,7 @@ The script will generate an output file named `a=<alpha>-b=<beta>.txt`, which co
 
 - Total cell count at the end of the optimal regime
 - Total cell count at the end of the mean administration regime
-- The ratio of final cell counts
+- Ratio of final cell counts
 - Total cost of drug administration
 - Individual drug costs for cisplatin and paclitaxel
 
