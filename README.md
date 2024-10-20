@@ -40,15 +40,14 @@ The system is described by the following differential equations:
    $$\frac{dNb}{dt} = -(1 - Up) \cdot Nb + Na \cdot (1 - Uc) - \beta \cdot Up \cdot Nb$$
 
 Where:
-- $$\( N_a\)$$ = Non-proliferative cells (G1-phase)
-- $$\( N_b \)$$ = Proliferative cells (S-/G2-phase)
+- $$\( N_a\)$$ = Non-proliferative cervical cancer cells (G1-phase)
+- $$\( N_b \)$$ = Proliferative cervical cancer cells (S-/G2-phase)
 - $$\( U_c \)$$ = Relative concentration of cisplatin
 - $$\( U_p \)$$ = Relative concentration of paclitaxel
 
 #### State and Drug Vectors
 - **State Vector:** $$\(N_a, N_b\)$$
 - **Drug Vector:** $$\(U_c, U_p\)$$
-
 
 #### How to Run
 To execute the script, use the following command in your terminal:
@@ -95,26 +94,26 @@ administration along with the respective individual drug costs.
 The system is described by the following differential equations:
 
 1. **Sympathoblasts ($$n_I$$):**
-   $$\frac{dn_I}{dt} = (r - 2) n_I + n_N + n_S - (delta \cdot u_{RA} + 2r \cdot u_{chemo} + delta \cdot (1 - u_{trk}) \cdot u_{NGF}) n_I + delta \cdot (1 - u_{trk}) n_N$$
+   $$\frac{dn_I}{dt} = (\lambda - 2) n_I + n_N + n_S - (\delta \cdot u_{RA} + 2r \cdot u_{chemo} + \delta \cdot (1 - u_{trk}) \cdot u_{NGF}) n_I + \delta \cdot (1 - u_{trk}) n_N$$
 
 2. **Adrenergic Cells ($$n_N$$):**
-   $$\frac{dn_N}{dt} = -2n_N + n_I + n_S + delta \cdot (u_{RA} + (1 - u_{trk}) \cdot u_{NGF}) n_I - (delta_{apop} \cdot (1 - u_{NGF}) \cdot (1 - u_{trk}) + 2delta \cdot (1 - u_{trk})) n_N$$
+   $$\frac{dn_N}{dt} = -2n_N + n_I + n_S + \delta \cdot (u_{RA} + (1 - u_{trk}) \cdot u_{NGF}) n_I - (\delta_{apop} \cdot (1 - u_{NGF}) \cdot (1 - u_{trk}) + 2\delta \cdot (1 - u_{trk})) n_N$$
 
 3. **Mesenchymal Cells ($$n_S$$):**
-   $$\frac{dn_S}{dt} = -2n_S + n_I + n_N + delta \cdot (1 - u_{trk}) n_N$$
+   $$\frac{dn_S}{dt} = -2n_S + n_I + n_N + \delta \cdot (1 - u_{trk}) n_N$$
 
 Where:
-- $$n_I$$ = Sympathoblasts
-- $$n_N$$ = Adrenergic cells
-- $$n_S$$ = Mesenchymal cells
-- $$u_{RA}$$ = Relative concentration of retinoic acid
-- $$u_{chemo}$$ = Relative concentration of chemotherapeutic agent
-- $$u_{trk}$$ = Relative concentration of track inhibitor 
-- $$u_{NGF}$$ = Relative concentration of nerve growth factor
+- $$\( n_I \)$$ = Sympathoblasts
+- $$\( n_N \)$$ = Adrenergic cells
+- $$\( n_S \)$$ = Mesenchymal cells
+- $$\( u_{RA} \)$$ = Relative concentration of retinoic acid
+- $$\( u_{chemo} \)$$ = Relative concentration of chemotherapeutic agent
+- $$\( u_{trk} \)$$ = Relative concentration of track inhibitor 
+- $$\( u_{NGF} \)$$ = Relative concentration of nerve growth factor
 
 #### State and Drug Vectors
-- **State Vector:** $$(n_I, n_N, n_S)$$
-- **Drug Vector:** $$(u_{RA}, u_{chemo}, u_{trk}, u_{NGF})$$
+- **State Vector:** $$\( n_I, n_N, n_S \)$$
+- **Drug Vector:** $$\(u_{RA}, u_{chemo}, u_{trk}, u_{NGF} \)$$
 
 #### How to Run
 To execute the script, use the following command in your terminal:
