@@ -86,4 +86,3 @@ The script will generate an output file named `a=<alpha>-b=<beta>-R11=<control_c
 - Ratio of final cell counts
 - Total cost of drug administration
 - Individual drug costs for cisplatin and paclitaxel
-- This output provides insights into the efficacy of different drug administration strategies in treating heterogeneous cell populations.
