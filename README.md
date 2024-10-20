@@ -94,7 +94,7 @@ administration along with the respective individual drug costs.
 The system is described by the following differential equations:
 
 1. **Sympathoblasts ($$n_I$$):**
-   $$\frac{dn_I}{dt} = (\lambda - 2) n_I + n_N + n_S - (\delta \cdot u_{RA} + 2r \cdot u_{chemo} + \delta \cdot (1 - u_{trk}) \cdot u_{NGF}) n_I + \delta \cdot (1 - u_{trk}) n_N$$
+   $$\frac{dn_I}{dt} = (\lambda - 2) n_I + n_N + n_S - (\delta \cdot u_{RA} + 2\lambda \cdot u_{chemo} + \delta \cdot (1 - u_{trk}) \cdot u_{NGF}) n_I + \delta \cdot (1 - u_{trk}) n_N$$
 
 2. **Adrenergic Cells ($$n_N$$):**
    $$\frac{dn_N}{dt} = -2n_N + n_I + n_S + \delta \cdot (u_{RA} + (1 - u_{trk}) \cdot u_{NGF}) n_I - (\delta_{apop} \cdot (1 - u_{NGF}) \cdot (1 - u_{trk}) + 2\delta \cdot (1 - u_{trk})) n_N$$
