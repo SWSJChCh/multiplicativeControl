@@ -72,25 +72,6 @@ Individual drug costs for cisplatin and paclitaxel
 diagonal to be varied independently to study how optimality varies with the cost of drugs relative to one-
 another. 
 
-#### Model Description
-The system is described by the following differential equations:
-
-1. **Non-Proliferative Cells ($$N_a$$):**
-   $$\frac{dNa}{dt} = 2(1 - Up) \cdot Nb - Na \cdot (1 - Uc) - \alpha \cdot Uc \cdot Na$$
-
-2. **Proliferative Cells ($$N_b$$):**
-   $$\frac{dNb}{dt} = -(1 - Up) \cdot Nb + Na \cdot (1 - Uc) - \beta \cdot Up \cdot Nb$$
-
-Where:
-- $$N_a$$ = Non-proliferative cells (G1-phase)
-- $$N_b$$ = Proliferative cells (S-/G2-phase)
-- $$U_c$$ = Relative concentration of cisplatin
-- $$U_p$$ = Relative concentration of paclitaxel
-
-#### State and Drug Vectors
-- **State Vector:** $$N_a, N_b$$
-- **Drug Vector:** $$U_c, U_p$$
-
 #### How to Run
 To execute the script, use the following command in your terminal:
 
