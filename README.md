@@ -40,7 +40,6 @@ The system is described by the following differential equations:
 2. **Proliferative Cells ($$N_b$$):**
    $$\frac{dNb}{dt} = -(1 - Up) \cdot Nb + Na \cdot (1 - Uc) - \beta \cdot Up \cdot Nb$$
 
-
 Where:
 - $$\( N_a\)$$ = Non-proliferative cells (G1-phase)
 - $$\( N_b \)$$ = Proliferative cells (S-/G2-phase)
