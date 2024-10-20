@@ -68,11 +68,9 @@ Total cost of drug administration
 Individual drug costs for cisplatin and paclitaxel
 
 ### Figure3.py
-`Figure2.py` simulates and analyzes optimal combination therapy for heterogeneous cell populations using drug synergies.
-It models the dynamics of non-proliferative and proliferative cells influenced by cisplatin and paclitaxel using coupled
-semi-linear ODEs. Optimal adminstration is then compared with administration at a constant rate, and the ratio of final
-cell counts are calculated in both regimes. This script also allows entries of the state cost matrix along the leading
-diagonal to be varied independently. 
+`Figure3.py` simulates the same system, but also allows entries of the state cost matrix along the leading
+diagonal to be varied independently to study how optimality varies with the cost of drugs relative to one-
+another. 
 
 #### Model Description
 The system is described by the following differential equations:
