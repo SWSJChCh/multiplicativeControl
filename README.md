@@ -26,9 +26,9 @@ pip install numpy scipy matplotlib
 
 ### Figure2.py
 `Figure2.py` simulates and analyzes optimal combination therapy for heterogeneous cell populations using drug synergies.
-It models the dynamics of non-proliferative and proliferative cells influenced by cisplatin and paclitaxel using coupled
-semi-linear ODEs. Optimal adminstration is then compared with administration at a constant rate, and the ratio of final
-cell counts are calculated in both regimes.
+It models the dynamics of non-proliferative and proliferative cervical cancer cells influenced by cisplatin and paclitaxel 
+using coupled semi-linear ODEs. Optimal adminstration is then compared with administration at a constant rate, and the 
+ratio of final cell counts are calculated as a metric of efficacy.
 
 #### Model Description
 The system is described by the following differential equations:
