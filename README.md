@@ -25,10 +25,9 @@ pip install numpy scipy matplotlib
 ## Script Descriptions
 
 ### Figure2.py
-`Figure2.py` simulates and analyzes optimal combination therapy for heterogeneous cell populations using drug synergies.
-It models the dynamics of non-proliferative and proliferative cervical cancer cells influenced by cisplatin and paclitaxel 
-using coupled semi-linear ODEs. Optimal adminstration is then compared with administration at a constant rate, and the 
-ratio of final cell counts are calculated as a metric of efficacy.
+`Figure2.py` models the dynamics of non-proliferative and proliferative cervical cancer cells influenced 
+by cisplatin and paclitaxel using coupled semi-linear ODEs. Optimal adminstration is then compared with 
+administration at a constant rate, and the ratio of final cell counts are calculated as a metric of efficacy.
 
 #### Model Description
 The system is described by the following differential equations:
@@ -85,3 +84,51 @@ The script will generate an output file named `a=<alpha>-b=<beta>-R11=<control_c
 - Ratio of final cell counts
 - Total cost of drug administration
 - Individual drug costs for cisplatin and paclitaxel
+
+### Figure5+6.py
+`Figure5+6.py` models the dynamics of sympathoblasts, adrenergic cells, and mesenchymal cells influenced by 
+retinoic acid, a chemotherapeutic agent, a track inhibitor, and nerve growth factor using coupled semi-linear
+ODEs. The script evaluates the effectiveness of drug combinations by calculating the total cost of drug 
+administration along with the respective individual drug costs.
+
+#### Model Description
+The system is described by the following differential equations:
+
+1. **Sympathoblasts ($$n_I$$):**
+   $$\frac{dn_I}{dt} = (r - 2) n_I + n_N + n_S - (delta \cdot u_{RA} + 2r \cdot u_{chemo} + delta \cdot (1 - u_{trk}) \cdot u_{NGF}) n_I + delta \cdot (1 - u_{trk}) n_N$$
+
+2. **Adrenergic Cells ($$n_N$$):**
+   $$\frac{dn_N}{dt} = -2n_N + n_I + n_S + delta \cdot (u_{RA} + (1 - u_{trk}) \cdot u_{NGF}) n_I - (delta_{apop} \cdot (1 - u_{NGF}) \cdot (1 - u_{trk}) + 2delta \cdot (1 - u_{trk})) n_N$$
+
+3. **Mesenchymal Cells ($$n_S$$):**
+   $$\frac{dn_S}{dt} = -2n_S + n_I + n_N + delta \cdot (1 - u_{trk}) n_N$$
+
+Where:
+- $$n_I$$ = Sympathoblasts
+- $$n_N$$ = Adrenergic cells
+- $$n_S$$ = Mesenchymal cells
+- $$u_{RA}$$ = Relative concentration of retinoic acid
+- $$u_{chemo}$$ = Relative concentration of chemotherapeutic agent
+- $$u_{trk}$$ = Relative concentration of track inhibitor 
+- $$u_{NGF}$$ = Relative concentration of nerve growth factor
+
+#### State and Drug Vectors
+- **State Vector:** $$n_I, n_N, n_S$$
+- **Drug Vector:** $$u_{RA}, u_{chemo}, u_{trk}, u_{NGF}$$
+
+#### How to Run
+To execute the script, use the following command in your terminal:
+
+```bash
+python Figure5+6.py <lambda> <delta> <delta_apop>
+Outputs
+The script will generate an output file named `lmbd=<lambda>-delta=<delta>-deltaAPOP=<delta_apop>`.txt, which contains:
+
+Total dosage of retinoic acid administered
+Total dosage of chemotherapeutic agent administered
+Total dosage of track inhibitor administered
+Total dosage of nerve growth factor administered
+Total cost of retinoic acid administration
+Total cost of chemotherapeutic agent administration
+Total cost of track inhibitor administration
+Total cost of nerve growth factor administration
