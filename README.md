@@ -1,7 +1,7 @@
 # Optimal control in combination therapy for heterogeneous cell populations with drug synergies
 
 ## Overview
-This repository contains Python scripts used to generate data for Figure 2,3,5 and 6 in the publication:
+This repository contains Python scripts used to generate data for Figure 2,3,5, and 6 in the publication:
 _Optimal control in combination therapy for heterogeneous cell populations with drug synergies_
 
 ### Code Authors
@@ -9,7 +9,7 @@ _Optimal control in combination therapy for heterogeneous cell populations with 
 - Simon Martina-Perez
 
 ### Date
-- 06/10/2024
+- 20/10/2024
 
 ### Requirements
 - Python 3.x
@@ -25,9 +25,10 @@ pip install numpy scipy matplotlib
 ## Script Descriptions
 
 ### Figure2.py
-`Figure2.py` models the dynamics of non-proliferative and proliferative cervical cancer cells influenced 
-by cisplatin and paclitaxel using coupled semi-linear ODEs. Optimal adminstration is then compared with 
-administration at a constant rate, and the ratio of final cell counts are calculated as a metric of efficacy.
+`Figure2.py` models the dynamics of non-proliferative and proliferative cervical cancer cells in the presence 
+of cisplatin and paclitaxel using coupled semi-linear ODEs. Optimal adminstration is then compared with 
+administration of the same amount at a constant rate, and the ratio of final cell counts are calculated as 
+a metric of efficacy.
 
 #### Model Description
 The system is described by the following differential equations:
