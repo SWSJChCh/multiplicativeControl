@@ -113,8 +113,8 @@ Where:
 - $$u_{NGF}$$ = Relative concentration of nerve growth factor
 
 #### State and Drug Vectors
-- **State Vector:** $$n_I, n_N, n_S$$
-- **Drug Vector:** $$u_{RA}, u_{chemo}, u_{trk}, u_{NGF}$$
+- **State Vector:** $$(n_I, n_N, n_S)$$
+- **Drug Vector:** $$(u_{RA}, u_{chemo}, u_{trk}, u_{NGF})$$
 
 #### How to Run
 To execute the script, use the following command in your terminal:
@@ -122,13 +122,14 @@ To execute the script, use the following command in your terminal:
 ```bash
 python Figure5+6.py <lambda> <delta> <delta_apop>
 Outputs
+```
 The script will generate an output file named `lmbd=<lambda>-delta=<delta>-deltaAPOP=<delta_apop>`.txt, which contains:
 
-Total dosage of retinoic acid administered
-Total dosage of chemotherapeutic agent administered
-Total dosage of track inhibitor administered
-Total dosage of nerve growth factor administered
-Total cost of retinoic acid administration
-Total cost of chemotherapeutic agent administration
-Total cost of track inhibitor administration
-Total cost of nerve growth factor administration
+- Total dosage of retinoic acid administered
+- Total dosage of chemotherapeutic agent administered
+- Total dosage of track inhibitor administered
+- Total dosage of nerve growth factor administered
+- Total cost of retinoic acid administration
+- Total cost of chemotherapeutic agent administration
+- Total cost of track inhibitor administration
+- Total cost of nerve growth factor administration
