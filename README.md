@@ -61,11 +61,11 @@ python Figure2.py <alpha> <beta>
 #### Outputs
 The script will generate an output file named `a=<alpha>-b=<beta>.txt`, which contains:
 
-Total cell count at the end of the optimal regime
-Total cell count at the end of the mean administration regime
-The ratio of final cell counts
-Total cost of drug administration
-Individual drug costs for cisplatin and paclitaxel
+-Total cell count at the end of the optimal regime
+-Total cell count at the end of the mean administration regime
+-The ratio of final cell counts
+-Total cost of drug administration
+-Individual drug costs for cisplatin and paclitaxel
 
 ### Figure3.py
 `Figure3.py` simulates the same system, but also allows entries of the state cost matrix along the leading
@@ -81,9 +81,9 @@ python example1-Fig2.py <alpha> <beta> <control_cost>
 #### Outputs
 The script will generate an output file named `a=<alpha>-b=<beta>-R11=<control_cost>.txt`, which contains:
 
-Total cell count at the end of the optimal regime
-Total cell count at the end of the mean administration regime
-Ratio of final cell counts
-Total cost of drug administration
-Individual drug costs for cisplatin and paclitaxel
-This output provides insights into the efficacy of different drug administration strategies in treating heterogeneous cell populations.
+-Total cell count at the end of the optimal regime
+-Total cell count at the end of the mean administration regime
+-Ratio of final cell counts
+-Total cost of drug administration
+-Individual drug costs for cisplatin and paclitaxel
+-This output provides insights into the efficacy of different drug administration strategies in treating heterogeneous cell populations.
