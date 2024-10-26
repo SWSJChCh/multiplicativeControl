@@ -1,8 +1,8 @@
 '''
-Figure5+6.py - 07/10/2024
+Figure5+6.py - 26/10/2024
 
-Optimal combination therapy for heterogeneous cell populations
-with drug synergies
+A script used in the publication: Optimal control in combination therapy 
+for heterogeneous cell populations with drug synergies
 
 Written by Samuel Johnson and Simon Martina-Perez
 
@@ -52,6 +52,7 @@ deltaApop = float(sys.argv[3])
 
 #Linear state coefficient matrix
 def A():
+         
     return np.array([[r - 2, 1 + delta, 1],\
                     [1, - 2 - 2 * delta - deltaApop, 1], \
                     [1, 1 + delta, -2]])
@@ -101,6 +102,7 @@ def D():
 
 #Epsilon matrices
 def E():
+         
     e_1 = np.array([[1], [0], [0]])
     e_2 = np.array([[0], [1], [0]])
     e_3 = np.array([[0], [0], [1]])
@@ -111,6 +113,7 @@ def E():
 
 #Compute control
 def control(x, lmbd):
+         
     #Basis vectors
     e_1 = np.array([[1], [0], [0]])
     e_2 = np.array([[0], [1], [0]])
@@ -140,6 +143,7 @@ def control(x, lmbd):
         u_star = np.maximum(u_star, np.array([[0], [0], [0], [0]]))
 
     else:
+             
         dummyControl = np.array([[1], [1], [1], [1]])
         dudH = R() @ dummyControl + sum([np.multiply(C()[i], ones @ x.T @ E()[i]) for \
                               i in range(2)]).T @ lmbd + (e_1.T @ x * lmbd.T @ e_1 * (D()[0]) + \
