@@ -121,8 +121,8 @@ To execute the script, use the following command in the terminal:
 
 ```bash
 python Figure5+6.py <lambda> <delta> <delta_apop>
-Outputs
 ```
+#### Outputs
 The script will generate an output file named `lmbd=<lambda>-delta=<delta>-deltaAPOP=<delta_apop>`.txt, which contains:
 
 - Total dosage of retinoic acid administered
