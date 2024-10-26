@@ -51,7 +51,7 @@ Where:
 - **Drug Vector:** $$\(U_c, U_p\)$$
 
 #### How to Run
-To execute the script, use the following command in your terminal:
+To execute the script, use the following command in the terminal:
 
 ```bash
 python Figure2.py <alpha> <beta>
@@ -71,7 +71,7 @@ diagonal to be varied independently to study how optimality varies with the cost
 another. 
 
 #### How to Run
-To execute the script, use the following command in your terminal:
+To execute the script, use the following command in the terminal:
 
 ```bash
 python Figure3.py <alpha> <beta> <control_cost>
@@ -117,7 +117,7 @@ Where:
 - **Drug Vector:** $$\(u_{RA}, u_{chemo}, u_{trk}, u_{NGF} \)$$
 
 #### How to Run
-To execute the script, use the following command in your terminal:
+To execute the script, use the following command in the terminal:
 
 ```bash
 python Figure5+6.py <lambda> <delta> <delta_apop>
