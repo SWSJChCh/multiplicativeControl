@@ -1,8 +1,8 @@
 '''
-Figure2.py - 06/10/24
+Figure2.py - 26/10/24
 
-A script used in the publication: Optimal combination therapy for 
-heterogeneous cell populations with drug synergies
+A script used in the publication: Optimal control in combination therapy 
+for heterogeneous cell populations with drug synergies
 
 Written by Samuel Johnson and Simon Martina-Perez
 
@@ -61,6 +61,7 @@ def C(alpha, beta):
 
 #Epsilon matrices
 def E():
+    
     e_1 = np.array([[1], [0]])
     e_2 = np.array([[0], [1]])
 
@@ -69,6 +70,7 @@ def E():
 
 #Compute control
 def control(x, lmbd, alpha, beta):
+    
     #Column vector of ones
     ones = np.array([[1], [1]])
 
