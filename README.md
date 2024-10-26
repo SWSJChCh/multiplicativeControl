@@ -9,7 +9,7 @@ _Optimal control in combination therapy for heterogeneous cell populations with 
 - Simon Martina-Perez
 
 ### Date
-- 20/10/2024
+- 26/10/2024
 
 ### Requirements
 - Python 3.x
@@ -26,7 +26,7 @@ pip install numpy scipy matplotlib
 
 ### Figure2.py
 `Figure2.py` models the dynamics of non-proliferative and proliferative cervical cancer cells in the presence 
-of cisplatin and paclitaxel using coupled semi-linear ODEs. Optimal adminstration is then compared with 
+of cisplatin and paclitaxel using coupled semi-linear ODEs. Optimal administration is then compared with 
 administration of the same amount at a constant rate, and the ratio of final cell counts are calculated as 
 a metric of efficacy.
 
